@@ -1,4 +1,4 @@
-const schemaVersion = "http://json-schema.org/draft-07/schema#"
+export const schemaVersion = "http://json-schema.org/draft-07/schema#"
 const ifcLabel = {
     type: "string",
     maxLength: 256

@@ -10,6 +10,8 @@
     "test": "vitest"
   },
   "devDependencies": {
+    "@types/json-schema": "^7.0.15",
+    "@types/xml2js": "^0.4.14",
     "@typescript-eslint/eslint-plugin": "^7.17.0",
     "@typescript-eslint/parser": "^7.17.0",
     "eslint": "^9.7.0",
@@ -21,6 +23,7 @@
     "vitest": "^2.0.4"
   },
   "dependencies": {
-    "ajv": "^8.17.1"
+    "ajv": "^8.17.1",
+    "xml2js": "^0.6.2"
   }
 }
