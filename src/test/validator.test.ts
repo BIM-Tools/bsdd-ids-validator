@@ -1,5 +1,5 @@
 import { expect, describe, it } from 'vitest';
-import { validateIfcJson, validateJsonSchema } from '../validator';
+import { validateIfcJson, validateJsonSchema } from '../validator/validator';
 
 describe('validateIfcJson', () => {
     it('should validate a valid ifcJSON', () => {

@@ -1,3 +1,3 @@
 // src/validator/index.ts
-export * from './validatorInterfaces';
+export * from '../types/validator';
 export * from './validator';

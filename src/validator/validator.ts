@@ -1,5 +1,5 @@
 import ifcJsonSchema from '../schema/ifcJsonSchema';
-import { ValidationResult } from './validatorInterfaces';
+import { ValidationResult } from '../types/validator';
 import Ajv from 'ajv';
 
 const ajv = new Ajv();
