@@ -34,6 +34,28 @@ export function convertIdsValueToJsonSchema(idsValue: IdsValue): JSONSchema7Type
     }
 }
 
+function convertIfcClassificationReferenceToSchema(classificationFacet: any): any {
+    const value = classificationFacet.value?.[0];
+    const system = classificationFacet.system?.[0];
+
+    return {
+        type: 'object',
+        properties: {
+            type: { type: 'string', enum: ['IfcClassificationReference'] },
+            identification: convertIdsValueToJsonSchema(value),
+            referencedSource: {
+                type: 'object',
+                properties: {
+                    type: { type: 'string', enum: ['IfcClassification'] },
+                    name: convertIdsValueToJsonSchema(system)
+                },
+                required: ['type', 'name']
+            }
+        },
+        required: ['type', 'identification', 'referencedSource']
+    };
+}
+
 function convertSpecificationToSchema(specification: Specification): JSONSchema7Type {
     const requirements = specification.requirements?.[0];
     if (!requirements) {
@@ -53,6 +75,15 @@ function convertSpecificationToSchema(specification: Specification): JSONSchema7
         if (entityFacet.predefinedType?.length) {
             schema.properties['predefinedType'] = convertIdsValueToJsonSchema(entityFacet.predefinedType[0]);
         }
+    }
+    const classificationFacets = requirements?.classification;
+    if (classificationFacets) {
+        schema.properties['hasAssociations'] = {
+            type: 'array',
+            items: classificationFacets.map((classificationFacet) => 
+                convertIfcClassificationReferenceToSchema(classificationFacet)
+            )
+        };
     }
     return schema;
 }

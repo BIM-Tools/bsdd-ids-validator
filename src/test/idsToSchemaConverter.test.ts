@@ -1,49 +1,61 @@
-import { describe, expect, it } from 'vitest';
-import convertIdsToJsonSchemas, { convertIdsValueToJsonSchema } from '../converters/idsToSchemaConverter';
-import { schemaVersion } from '../schema/ifcJsonSchema';
+import { describe, expect, it } from "vitest";
+import convertIdsToJsonSchemas, {
+  convertIdsValueToJsonSchema,
+} from "../converters/idsToSchemaConverter";
+import { schemaVersion } from "../schema/ifcJsonSchema";
 
-describe('convertIdsValueToJsonSchema', () => {
-  it('should handle simpleValue', () => {
-    const idsValue = { simpleValue: ['testValue'] };
+describe("convertIdsValueToJsonSchema", () => {
+  it("should handle simpleValue", () => {
+    const idsValue = { simpleValue: ["testValue"] };
     const result = convertIdsValueToJsonSchema(idsValue);
-    expect(result).toEqual({ type: 'string', enum: ['testValue'] });
+    expect(result).toEqual({ type: "string", enum: ["testValue"] });
   });
 
-  it('should handle restriction with base', () => {
-    const idsValue = { restriction: [{ $: { base: 'string' } }] };
+  it("should handle restriction with base", () => {
+    const idsValue = { restriction: [{ $: { base: "string" } }] };
     const result = convertIdsValueToJsonSchema(idsValue);
-    expect(result).toEqual({ type: 'string' });
+    expect(result).toEqual({ type: "string" });
   });
 
-  it('should handle restriction with pattern', () => {
+  it("should handle restriction with pattern", () => {
     const idsValue = {
-      restriction: [{ $: { base: 'string' }, pattern: [{ $: { value: '\\d+' } }] }]
+      restriction: [
+        { $: { base: "string" }, pattern: [{ $: { value: "\\d+" } }] },
+      ],
     };
     const result = convertIdsValueToJsonSchema(idsValue);
-    expect(result).toEqual({ type: 'string', pattern: '\\d+' });
+    expect(result).toEqual({ type: "string", pattern: "\\d+" });
   });
 
-  it('should handle restriction with enumeration', () => {
-    const idsValue = { restriction: [{ $: { base: 'string' }, enumeration: [{ $: { value: 'value1' } }, { $: { value: 'value2' } }] }] };
+  it("should handle restriction with enumeration", () => {
+    const idsValue = {
+      restriction: [
+        {
+          $: { base: "string" },
+          enumeration: [{ $: { value: "value1" } }, { $: { value: "value2" } }],
+        },
+      ],
+    };
     const result = convertIdsValueToJsonSchema(idsValue);
-    expect(result).toEqual({ type: 'string', enum: ['value1', 'value2'] });
+    expect(result).toEqual({ type: "string", enum: ["value1", "value2"] });
   });
 
-  it('should throw error for unsupported format', () => {
+  it("should throw error for unsupported format", () => {
     const idsValue = {};
-    expect(() => convertIdsValueToJsonSchema(idsValue)).toThrow('Unsupported idsValue format');
+    expect(() => convertIdsValueToJsonSchema(idsValue)).toThrow(
+      "Unsupported idsValue format"
+    );
   });
 });
 
-
-describe('convertIdsToJsonSchemas', () => {
-  it('should return empty array for empty xmlString', async () => {
-    const xmlString = '';
+describe("convertIdsToJsonSchemas", () => {
+  it("should return empty array for empty xmlString", async () => {
+    const xmlString = "";
     const result = await convertIdsToJsonSchemas(xmlString);
     expect(result).toEqual([]);
   });
 
-  it('should handle valid xmlString with single specification', async () => {
+  it("should handle valid xmlString with single specification", async () => {
     const xmlString = `
       <ids>
         <specifications>
@@ -61,21 +73,20 @@ describe('convertIdsToJsonSchemas', () => {
 
     const expectedSchema = {
       $schema: schemaVersion,
-      type: 'object',
+      type: "object",
       properties: {
         type: {
           type: "string",
-          enum: ['IFCWALL']
-        }
-      }
+          enum: ["IFCWALL"],
+        },
+      },
     };
-
 
     const result = await convertIdsToJsonSchemas(xmlString);
     expect(result).toEqual([expectedSchema]);
   });
 
-  it('should handle valid xmlString with multiple specifications', async () => {
+  it("should handle valid xmlString with multiple specifications", async () => {
     const xmlString = `
       <ids>
         <specifications>
@@ -105,35 +116,35 @@ describe('convertIdsToJsonSchemas', () => {
 
     const expectedSchema1 = {
       $schema: schemaVersion,
-      type: 'object',
+      type: "object",
       properties: {
         type: {
-          type: 'string',
-          enum: ['IFCWALL']
+          type: "string",
+          enum: ["IFCWALL"],
         },
         predefinedType: {
-          type: 'string',
-          enum: ['SOLID']
-        }
-      }
+          type: "string",
+          enum: ["SOLID"],
+        },
+      },
     };
 
     const expectedSchema2 = {
       $schema: schemaVersion,
-      type: 'object',
+      type: "object",
       properties: {
         type: {
-          type: 'string',
-          enum: ['IFCSLAB']
-        }
-      }
+          type: "string",
+          enum: ["IFCSLAB"],
+        },
+      },
     };
 
     const result = await convertIdsToJsonSchemas(xmlString);
     expect(result).toEqual([expectedSchema1, expectedSchema2]);
   });
 
-  it('should handle missing entity in requirements', async () => {
+  it("should handle missing entity in requirements", async () => {
     const xmlString = `
       <ids>
         <specifications>
@@ -145,15 +156,16 @@ describe('convertIdsToJsonSchemas', () => {
       </ids>`;
 
     const result = await convertIdsToJsonSchemas(xmlString);
-    expect(result).toEqual([{
-      $schema: schemaVersion,
-      type: 'object',
-      properties: {
-      }
-    }]);
+    expect(result).toEqual([
+      {
+        $schema: schemaVersion,
+        type: "object",
+        properties: {},
+      },
+    ]);
   });
 
-  it('should handle name restriction with enumeration', async () => {
+  it("should handle name restriction with enumeration", async () => {
     const xmlString = `
       <ids>
         <specifications>
@@ -174,21 +186,20 @@ describe('convertIdsToJsonSchemas', () => {
 
     const expectedSchema = {
       $schema: schemaVersion,
-      type: 'object',
+      type: "object",
       properties: {
         type: {
           type: "string",
-          enum: ['IFCWALL', 'IFCSLAB']
-        }
-      }
+          enum: ["IFCWALL", "IFCSLAB"],
+        },
+      },
     };
-
 
     const result = await convertIdsToJsonSchemas(xmlString);
     expect(result).toEqual([expectedSchema]);
   });
 
-  it('should handle name restriction with pattern', async () => {
+  it("should handle name restriction with pattern", async () => {
     const xmlString = `
       <ids>
         <specifications>
@@ -208,15 +219,67 @@ describe('convertIdsToJsonSchemas', () => {
 
     const expectedSchema = {
       $schema: schemaVersion,
-      type: 'object',
+      type: "object",
       properties: {
         type: {
           type: "string",
-          pattern: '[A-Z]{2}[0-9]{2}'
-        }
-      }
+          pattern: "[A-Z]{2}[0-9]{2}",
+        },
+      },
     };
 
+    const result = await convertIdsToJsonSchemas(xmlString);
+    expect(result).toEqual([expectedSchema]);
+  });
+
+  it("should handle classification facet", async () => {
+    const xmlString = `
+      <ids>
+        <specifications>
+          <specification>
+            <requirements>
+              <classification>
+                <value>
+                  <simpleValue>23.23</simpleValue>
+                </value>
+                <system>
+                  <simpleValue>NL/SfB tabel 1</simpleValue>
+                </system>
+              </classification>
+            </requirements>
+          </specification>
+        </specifications>
+      </ids>`;
+
+      const expectedSchema = {
+        $schema: schemaVersion,
+        type: "object",
+        properties: {
+          hasAssociations: {
+            type: "array",
+            items: [{
+              type: "object",
+              properties: {
+                type: { type: "string", enum: ["IfcClassificationReference"] },
+                identification: { type: "string", enum: ["23.23"] },
+                referencedSource: {
+                  type: "object",
+                  properties: {
+                    type: { type: "string", enum: ["IfcClassification"] },
+                    name: { type: "string", enum: ["NL/SfB tabel 1"] }
+                  },
+                  required: ['type', 'name']
+                },
+              },
+              required: [
+                "type",
+                "identification",
+                "referencedSource"
+              ],
+            }],
+          },
+        },
+      };
 
     const result = await convertIdsToJsonSchemas(xmlString);
     expect(result).toEqual([expectedSchema]);
