@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "test": "vitest"
+    "test": "vitest",
+    "generate-api": "swagger-typescript-api --path https://api.swaggerhub.com/apis/buildingSMART/Dictionaries/v1/swagger.json --output ./src/bsdd/ --name bsddApi.ts --api-class-name BsddApi"
   },
   "devDependencies": {
     "@types/json-schema": "^7.0.15",
@@ -17,7 +18,10 @@
     "eslint": "^9.7.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.2.1",
+    "msw": "^2.3.4",
+    "node-fetch": "^3.3.2",
     "prettier": "^3.3.3",
+    "swagger-typescript-api": "^13.0.14",
     "typescript": "^5.2.2",
     "vite": "^5.3.4",
     "vitest": "^2.0.4"
